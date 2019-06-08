@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+{# 在页面使用静态文件的时候，每一次都要重新导入上边这条语句 #}
+
+{% block title %}
+	我的网站
+{% endblock %}
+
+
+
+{% block header_extends %}
+	<link rel="stylesheet" href="{% static 'css/home.css' %}">
+	<script src="http://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
+
+{% endblock %}
+
+
+{% block 'nav_home_active' %}
+	active
+{% endblock %}
+
+{%  block content %}
+	<h3 class="home-content">欢迎访问我的网站，往下看...</h3>
+	<h1></h1>
+	<div id="container" style="width: 600px;height:400px;"></div>
+    <!-- 24小时内的热门博客 -->
+    <div class="hot-data">
+        <h3>今日热门</h3>
+        <ul>
+            {% for hot_date in today_hot_data %}
+                <li>
+                    <a href="{% url 'blog:blog_detail' hot_date.id %}">
+                        {{ hot_date.title }}
+                    </a>
+                    ({{ hot_date.read_details__read_num }})
+                </li>
+            {% empty %}
+                <li>暂无热门推荐</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="hot-data">
+    <h3>昨日热门</h3>
+    <ul>
+        {% for hot_date in yesterday_hot_data %}
+            <li>
+                <a href="{% url 'blog:blog_detail' hot_date.content_object.pk %}">
+                    {{ hot_date.content_object.title }}
+                </a>
+                ({{ hot_date.read_num }})
+            </li>
+        {% empty %}
+            <li>暂无热门推荐</li>
+        {% endfor %}
+    </ul>
+    </div>
+
+    <div class="hot-data">
+    <h3>本周热门</h3>
+    <ul>
+        {% for hot_date in past_seven_hot_read %}
+            <li>
+                <a href="{% url 'blog:blog_detail' hot_date.id %}">
+                    <!-- {{ hot_date.content_object.title }} -->
+                    {{hot_date.title}}
+                </a>
+                ({{ hot_date.read_num_sum }})
+            </li>
+        {% empty %}
+            <li>暂无热门推荐</li>
+        {% endfor %}
+    </ul>
+    </div>
+    <div class="hot-data">
+        <h3>本月热门</h3>
+        <ul>
+            {% for hot_date in past_30_hot_read %}
+                <li>
+                    <a href="{% url 'blog:blog_detail' hot_date.id %}">
+                        <!-- {{ hot_date.content_object.title }} -->
+                        {{hot_date.title}}
+                    </a>
+                    ({{ hot_date.read_num_sum }})
+                </li>
+            {% empty %}
+                <li>暂无热门推荐</li>
+            {% endfor %}
+        </ul>
+    </div>
+ 	<script>
+        // 图表配置
+        var options = {
+            chart: {
+                type: 'line'                          //指定图表的类型，默认是折线图（line）
+            },
+            title: {
+                text: '七日内阅读浏览量'                 // 标题
+            },
+            xAxis: {
+                categories: {{dates|safe}}   // x 轴分类
+            },
+            yAxis: {
+                title: {
+                    text: null	             // y 轴标题
+                },
+                labels:{ enabled: false },
+                gridLineDashStyle:'Dash',  // 设置线的类型
+            },
+            series: [{                              // 数据列
+                name: '阅读数',                        // 数据列名
+                data: {{read_nums}}                     // 数据
+            },],
+            plotOptions: {
+			    line: {
+			        dataLabels: {
+			            enabled: true
+			        }
+			    }
+			},
+            legend: { enabled: false },
+            credits: { enabled: false },
+         
+
+        };
+        // 图表初始化函数
+        var chart = Highcharts.chart('container', options);
+    </script>
+{% endblock %}

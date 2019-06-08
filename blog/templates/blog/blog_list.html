@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% load comment_tag %}
+
+{# 页面标题 #}
+{% block title %}
+	我的网站
+{% endblock %}
+
+{% load static %}
+{% block header_extends %}
+	<link rel="stylesheet" href="{% static 'blog.css' %}">
+{% endblock %}
+
+{# 页面内容 #}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-8 col-md-9 col-lg-10">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						{% block blog_list_title %}
+							<strong>博客列表</strong><small> (共找到 {{page_of_blogs.paginator.count}} 篇博客)</small>
+						{% endblock %}
+					</div>
+					<div class="panel-body">
+						{% for blog in page_of_blogs.object_list %}
+							<div class="blog">
+								<h3>
+									<a href="{% url 'blog:blog_detail' blog.pk %}">
+										{{blog.title}}
+									</a>
+								</h3>
+								<p class="blog-info">
+									<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+									<a href="{% url 'blog:blog_with_type' blog.blog_type.id %}">{{blog.blog_type}}</a>&nbsp;&nbsp;
+									<span class="glyphicon glyphicon-time" aria-hidden="true"></span> 
+									{{blog.created_time|date:'Y-m-d'}}
+									阅读数量({{blog.get_read_num}})
+									评论数量({{blog.comments.all.count}})	
+									实验代码({% get_comment_count blog %})
+																</p>
+							<!-- 长内容的省略显示 -->
+							<!-- truncatewords 针对英文的显示 -->
+								<p>内容：{{blog.content|truncatechars:120}}</p>
+							</div>
+						<!-- 如果for循环中的内容为空，则执行empty中的内容 -->
+						{% empty %}
+							<div class="blog">
+								<p>--  暂无博客，敬请期待  --</p>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<div class='paginator'>
+				  <ul class="pagination">
+				  	{# 上一页功能 #}
+					{% if page_of_blogs.has_previous %}
+					    <li>
+					      <a href="?page={{page_of_blogs.previous_page_number}}" aria-label="Previous">
+					        <span aria-hidden="true">&laquo;</span>
+					      </a>
+					    </li>
+					{% elif page_of_blogs.number == 1 %}
+						<li>	
+					        <span aria-hidden="true">&laquo;</span>
+					    </li>					
+					{% endif %}
+					{# 全部页码 #}
+					{% for page_num in page_range %}
+						{# .number属性是获取当前页的页码 #}
+					    {% if page_num == page_of_blogs.number %}
+					    	<li class="active"><a href="?page={{page_num}}">{{page_num}}</a></li>
+					    {% else %}
+						    {% if page_num == '...' %}
+						    	<li><span>{{page_num}}</span></li>
+							{% else %}
+						    	<li><a href="?page={{page_num}}">{{page_num}}</a></li>
+							{% endif %}
+					    {% endif %}
+					{% endfor %}
+					{# 下一页，并且根据是否为最后一页添加a标签 #}
+					{% if page_of_blogs.has_next %}
+					    <li>
+					      <a href="?page={{page_of_blogs.next_page_number}}" aria-label="Next">
+					        <span aria-hidden="true">&raquo;</span>
+					      </a>
+					    </li>
+					{% else %}
+						<li>	
+					        <span aria-hidden="true">&raquo;</span>
+					    </li>					
+					{% endif %}
+				  </ul>
+				
+				</div>
+			</div>
+			<div class="hidden-xs col-sm-4 col-md-3 col-lg-2">
+				<div class="panel panel-default">
+				  <div class="panel-heading">
+					博客分类
+				  </div>
+				  <div class="panel-body">
+					<ul class="blog-types">
+						{% for blog_type in blog_types %}
+							<li>
+								<a href="{% url 'blog:blog_with_type' blog_type.id %}">
+									{{blog_type.type_name}}
+								</a>
+								{# 根据博客类型进行反向查询 #}
+								({{blog_type.blog_set.all|length}}) 
+							</li>
+						{% empty %}
+							<li>暂无分类</li>
+						{% endfor %}
+					</ul>
+				  </div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						日期归档
+					</div>
+					<div class="panel-body">
+						<ul class="blog-types">
+							{% for blog_date, numbers in blog_dates.items %}
+								<li>
+									<a href="{% url 'blog:blog_with_date' blog_date.year blog_date.month %}">
+										{{blog_date|date:'Y年m日'}}({{numbers}})
+									</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block 'nav_list_active' %}
+	active
+{% endblock %}
+
+
