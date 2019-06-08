@@ -1,0 +1,17 @@
+* {
+	margin: 0px;
+	padding: 0px;
+
+}
+
+body {
+	margin-top: 70px!important;
+}
+
+ul {
+	list-style-type: none!@important;;
+}
+
+ul.navbar-right {
+	margin-right: 0;
+}
