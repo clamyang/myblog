@@ -4,5 +4,4 @@ django-js-asset==1.2.2
 django-pure-pagination==0.3.0
 mysqlclient==1.4.2.post1
 Pillow==6.0.0
-pkg-resources==0.0.0
 pytz==2019.1
