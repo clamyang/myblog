@@ -33,6 +33,9 @@ class Blog(models.Model, ReadNumExtension):
 	def get_email(self):
 		return self.author.email
 
+	def get_user(self):
+		return self.author
+
 
 	def __str__(self):
 		return "<Blog %s>" % self.title
