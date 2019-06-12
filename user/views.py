@@ -57,6 +57,7 @@ def register(request):
 				'email': email,
 			}
 			user = User.objects.create_user(**conditions)
+			user.save()
 			del request.session['register_code']
 			auth.login(request, user)
 			return redirect(request.GET.get('from', '/'))
