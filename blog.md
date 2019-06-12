@@ -77,7 +77,6 @@
 # 阅读数量统计和按日期统计阅读数量
 	- 一篇博客对应一个阅读数量
 	- 按日期统计，需要添加DateTimeField(auto_now_add=True)
-	- 
 
 # Form表单的使用
 
@@ -105,3 +104,14 @@
  - 2.在settings中配置邮箱信息
  - 3.`from django.core.mail import send_mail`
  - 4.使用send_mail方法, (title, message, from_user, to_user)
+
+# 站内消息通知
+ - 1.安装第三方包
+ 	- pip3 install django-notifitions-hq
+ - 2.将包添加在settings中
+ - 3.创建`signals.py`文件
+ 	- from notifications.signals import notify
+ 	- notify.send(actor, recipient, verb, action_object, target, level, description, public, timestamp, \**kwargs)
+ - 4.在`apps.py`中添加`ready()`函数，并导入`signals.py`文件
+ - 5.在`__init__.py`中添加
+ 	- `default_app_config = 'user.apps.类名'`
