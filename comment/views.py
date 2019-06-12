@@ -8,6 +8,7 @@ from comment.models import Comment
 def update_comment(request):
 	referer = request.META.get('HTTP_REFERER', '/')  # 从哪个页面过来的，前一个页面的链接
 	comment_form = CommentForm(request.POST, user=request.user)  # 额外给Form类传值
+	data = {}
 	if comment_form.is_valid():
 		object_id = comment_form.cleaned_data.get('object_id')
 		comment_text = comment_form.cleaned_data.get('comment_text')
@@ -23,24 +24,30 @@ def update_comment(request):
 			root = None
 			reply_to = None
 
-		conditions = {
-			"object_id": object_id,
-			"comment_content": comment_text,
-			"content_object": content_object,
-			"parent": parent,
-			"user": user,
-			"root": root,
-			"reply_to": reply_to,
-		}
-		data = {}
-		obj = Comment.objects.create(**conditions)
+		# conditions = {
+		# 	"object_id": object_id,
+		# 	"comment_content": comment_text,
+		# 	"content_object": content_object,
+		# 	"parent": parent,
+		# 	"user": user,
+		# 	"root": root,
+		# 	"reply_to": reply_to,
+		# }
+		obj = Comment()
+		obj.object_id = object_id
+		obj.comment_content = comment_text
+		obj.content_object = content_object
+		obj.parent = parent
+		obj.user = user
+		obj.root = root
+		obj.reply_to = reply_to
+		obj.save()
+
 		if parent is not None:
 			data['reply_to'] = obj.reply_to.get_nickname_or_username()
 		else:
 			data['reply_to'] = ''
-
-		# 发送邮件
-		obj.send_mail()
+			
 		data['status'] = 'success'
 		data['pk'] = obj.id
 		data['username'] = obj.user.get_nickname_or_username()
@@ -49,7 +56,6 @@ def update_comment(request):
 		data['root_pk'] = obj.root_id if not obj.root is None else None
 		data['content_type'] = ContentType.objects.get_for_model(obj).model
 	else:
-		data = {}
 		data['status'] = 'failed'
 		data['message'] = list(comment_form.errors.values())[0][0]
 	return JsonResponse(data)
