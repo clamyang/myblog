@@ -25,3 +25,7 @@ def home(request):
 	context['past_30_hot_read'] = get_past_30_hot_read(blog_content_type)
 	return render(request, 'home.html', context)
 
+
+def my_notifications(request):
+	context = {}
+	return render(request, 'my_notifications.html', context)

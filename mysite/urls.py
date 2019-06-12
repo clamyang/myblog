@@ -31,6 +31,8 @@ urlpatterns = [
     path('comment/', include('comment.urls')),  # 评论路由
     path('likes/', include('likes.urls')),  # 点赞路由
     path('user/', include('user.urls')),
+    path('notifications/', include('notifications.urls'), name='notifications'),
+    path('my_notifications/', views.my_notifications, name='my_notifications')
 ]
 
 # 配置MEDIA的存储路径。
