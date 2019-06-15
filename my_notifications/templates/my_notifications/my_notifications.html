@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}
+	我的消息
+{% endblock %}
+
+
+{% load static %}
+{# 在页面使用静态文件的时候，每一次都要重新导入上边这条语句 #}
+
+{% block header_extends %}
+	<link rel="stylesheet" href="{% static 'my_notifications/my_notifications.css' %}">
+{% endblock %}
+
+
+{% block 'nav_home_active' %}
+	active
+{% endblock %}
+
+{%  block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<a href="{% url 'notifications:mark_all_as_read'%}?next={% url 'my_notifications' %} " class="btn btn-primary">全部标记为已读</a>
+			<a href="{% url 'delete_read' %}" class="btn btn-danger">删除已读</a>
+			<ul class='notifications'>
+			{% for notification in request.user.notifications.all %}
+				<li class="{% if not notification.unread %}read{% endif %}">[{{ notification.timesince }}-之前] <a href="{% url 'my_notification' notification.pk %}">{{notification.verb}}</a></li>
+			{% empty %}
+				<p>暂无消息</p>
+			{% endfor %}
+
+			</ul>
+		</div>
+	</div>
+</div>
+{% endblock %}
