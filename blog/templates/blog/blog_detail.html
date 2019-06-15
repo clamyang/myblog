@@ -275,5 +275,11 @@
 
 			})
 		}
+
+		if (window.location.hash) {
+			$("html").animate({
+				scrollTop: $(window.loaction.hash).offset().top -60
+			}, 500);
+		}
 	</script>
 {% endblock %}

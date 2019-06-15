@@ -47,7 +47,7 @@ def get_list_common_data(blogs_all_list, page_num):
 	:param page_num: 当前页码
 	:return context: 返回一个字典
 	"""
-	paginator = Paginator(blogs_all_list, 2)
+	paginator = Paginator(blogs_all_list, 5)
 	# get_page()方法自动处理类型转换或者异常
 	page_of_blogs = paginator.get_page(page_num) 
 
