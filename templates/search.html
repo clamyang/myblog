@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}我的网站|搜索{% endblock %}
+{% block nav_home_active %}active{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {% if search_word == '' %}
+                    <h3>你没有搜索任何内容</h3>
+                    <p>可以尝试输入一些什么东西进行搜索，例如: Django</p>
+                {% else %}
+                    <h3>搜索 "{{search_word}}"，找到{{result_count}}条结果</h3>
+                    <hr>
+                    {% for blog in page_of_blogs %}
+                        <a href="{% url 'blog:blog_detail' blog.pk %}">
+                            <h4>{{blog.title}}</h4>
+                        </a>
+                        <p>{{blog.content|striptags|truncatechars_html:100}}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {% if page_of_blogs.has_previous %}
+                    <a class='btn btn-default' href="{% url 'search' %}?wd={{search_word}}&page={{page_of_blogs.previous_page_number}}">上一页</a>
+                {% endif %}
+                {% if page_of_blogs.has_next %}
+                    <a class='btn btn-default' href="{% url 'search' %}?wd={{search_word}}&page={{page_of_blogs.next_page_number}}">下一页</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

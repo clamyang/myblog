@@ -1,3 +1,4 @@
+{% load notifications_tags %}
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -18,6 +19,7 @@
 	<!-- js的相关配置(也可以放在body内的最后) -->
 	<script type="text/javascript" src="{% static 'jquery-1.12.4.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'notifications/notify.js' %}"></script>
 	{% block header_extends %}{% endblock %}
 </head>
 <body>
@@ -46,17 +48,32 @@
 						<li>
 							<a href="{% url 'register' %}?from={{request.get_full_path}}">注册</a>
 						</li>
+						<form class="navbar-form navbar-left search-form" action="{% url 'search' %}" method="GET">
+							<div class="form-group">
+							<input type="text" name='wd' class="form-control" placeholder="Search">
+							</div>
+							<button type="submit" class="btn btn-default ">
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+						</form>
+
 					{% else %}
+						{% notifications_unread as unread_count %}
 						<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">{{user.username}} <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="{% url 'user_info' %}">个人资料</a></li>
-							<li><a href="{% url 'my_notifications' %}">我的消息</a></li>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">你好， {{user.get_nickname_or_username}} 
+							<span class="badge unread-count live_notify_badge">{% if unread_count > 0 %}{{unread_count}}{% endif %}</span>
+								<span class="caret"></span></a>
+							
+							<ul class="dropdown-menu">
+								<li><a href="{% url 'user_info' %}">个人资料</a></li>
+								<li><a href="{% url 'my_notifications' %}">我的消息
+								<span class="badge unread-count live_notify_badge">{% if unread_count > 0 %}{{unread_count}}{% endif %}</span>
+								</a></li>
 							{% if user.is_staff or user.is_superuser %}
-							<li><a href="{% url 'admin:index' %}">后台管理</a></li>
+								<li><a href="{% url 'admin:index' %}">后台管理</a></li>
 							{% endif %}
-							<li><a href="{% url 'logout' %}?from={{request.get_full_path}}">退出登录</a></li>
-						</ul>
+								<li><a href="{% url 'logout' %}?from={{request.get_full_path}}">退出登录</a></li>
+							</ul>
 						</li>
 					{% endif %}
 				</ul>
@@ -112,8 +129,15 @@
                 }
             });
         });
-
+		function my_special_notifications_callback(data) {
+			unread_count = data['unread_count'];
+			if (unread_count==0) {
+				unread_count = ''
+			}
+			$(".live_notify_badge").text(unread_count);
+		}
 	</script>
+	{% register_notify_callbacks callbacks='my_special_notifications_callback' %}
 	{% block script_extends %}
 	{% endblock %}
 
