@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.cache import cache
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from read_statistics.utils import get_past_seven_days_data, get_today_hot_read, get_yesterday_hot_read, get_past_7_data, get_past_30_hot_read
 from blog.models import Blog
-
 
 def home(request):
 	blog_content_type = ContentType.objects.get_for_model(Blog)
@@ -26,6 +27,27 @@ def home(request):
 	return render(request, 'home.html', context)
 
 
-def my_notifications(request):
+def search(request):
+	search_word = request.GET.get('wd', '').strip()
+	page_num = request.GET.get('page', '')
+
+	condition = None
+	for keyword in search_word:
+		if condition is None:
+			condition = Q(title__icontains=keyword)
+		else:
+			condition = condition | Q(title__icontains=keyword)
+	search_results = []
+	if condition is not None:
+		search_results = Blog.objects.filter(condition)
+	paginator = Paginator(search_results, 5)
+	# get_page()方法自动处理类型转换或者异常
+	page_of_blogs = paginator.get_page(page_num) 
+
+
 	context = {}
-	return render(request, 'my_notifications.html', context)
+	context['search_word'] = search_word
+	context['result_count'] = search_results.count()
+	context['page_of_blogs'] = page_of_blogs
+	return render(request, 'search.html', context)
+
