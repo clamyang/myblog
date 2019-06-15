@@ -16,12 +16,15 @@ def send_notification(sender, instance, **kwargs):
 		if instance.content_type.model == 'blog':
 			blog = instance.content_object
 			verb = '{0} 评论了你的:《{1}》'.format(instance.user.get_nickname_or_username(), blog.title)
+			url = blog.get_url() + "#comment_" + str(instance.pk)
 		else:
 			raise Exception('未知类型')
 	else:
 		recipient = instance.reply_to
 		verb = '{0} 回复了你的评论:({1})'.format(instance.user.get_nickname_or_username(), strip_tags(instance.parent.comment_content))
-	notify.send(instance.user, recipient=recipient, verb=verb)
+		url = instance.content_object.get_url() + "#comment_" + str(instance.pk)
+
+	notify.send(instance.user, recipient=recipient, verb=verb, url=url)
 
 
 class SendMail(threading.Thread):
