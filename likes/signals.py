@@ -12,4 +12,5 @@ def send_like_notifications(sender, instance, **kwargs):
 	elif instance.content_type.model == 'blog':
 		verb = '你的博客-<{0}>-被<{1}>点赞'.format(instance.content_object.title, instance.user.get_nickname_or_username())
 		recipient = instance.content_object.author
-	notify.send(instance.user, recipient=recipient, verb=verb)
+	url = instance.content_object.get_url()
+	notify.send(instance.user, recipient=recipient, verb=verb, url=url)
