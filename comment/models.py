@@ -19,5 +19,8 @@ class Comment(models.Model):
 	reply_to = models.ForeignKey(User, related_name="replies", null=True, on_delete=models.CASCADE)
 
 
+	def get_url(self):
+		return self.content_object.get_url()
+
 	def __str__(self):
 		return '<Comment %s>' % self.comment_content
