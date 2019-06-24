@@ -37,17 +37,20 @@ def search(request):
 			condition = Q(title__icontains=keyword)
 		else:
 			condition = condition | Q(title__icontains=keyword)
+	print(condition)
 	search_results = []
 	if condition is not None:
 		search_results = Blog.objects.filter(condition)
+		result_count = search_results.count()
+	else:
+		result_count = 0
 	paginator = Paginator(search_results, 5)
 	# get_page()方法自动处理类型转换或者异常
 	page_of_blogs = paginator.get_page(page_num) 
 
-
 	context = {}
 	context['search_word'] = search_word
-	context['result_count'] = search_results.count()
+	context['result_count'] = result_count
 	context['page_of_blogs'] = page_of_blogs
 	return render(request, 'search.html', context)
 
