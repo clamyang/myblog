@@ -1,17 +1,17 @@
 import datetime
 import string
 import random
+import time
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.urls import reverse
-from .forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm, ChangePassword, ForgetPassword
 from django.contrib import auth
-from django.shortcuts import render, redirect
-from django.utils import timezone
 from django.db.models import Sum
+from django.utils import timezone
 from django.core.mail import send_mail
+from django.shortcuts import render, redirect
 from .models import Profile
-import time
+from .forms import LoginForm, RegForm, ChangeNicknameForm, BindEmailForm, ChangePassword, ForgetPassword
 
 
 def login(request):
