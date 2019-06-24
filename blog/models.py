@@ -18,8 +18,8 @@ class Blog(models.Model, ReadNumExtension):
 	title = models.CharField(max_length=30)
 	blog_type = models.ForeignKey(BlogType, on_delete=models.CASCADE)  # 与博客类型添加外键关联
 
-	read_details = GenericRelation(ReadDetail)  # 通过contexttypes将 Blog 和 ReadDetail 直接关联起来。
-	comments = GenericRelation(Comment)
+	read_details = GenericRelation(ReadDetail)  # 通过contenttypes将 Blog 和 ReadDetail 直接关联起来。
+	comments = GenericRelation(Comment) # 通过contenttypes将Blog和Comment模型关联到一起
 	content = RichTextUploadingField()  # 富文本带上传图片功能的字段
 	author = models.ForeignKey(User, on_delete=models.CASCADE)
 	created_time = models.DateTimeField(auto_now_add=True)  # auto_now_add 一般用于指定创建时间
