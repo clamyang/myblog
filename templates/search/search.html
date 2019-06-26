@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}我的网站|搜索{% endblock %}
+{% block nav_home_active %}active{% endblock %}
+{% block content %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+			{% if query %}
+				{% if search_word == '' %}
+					<h3>你没有搜索任何内容</h3>
+					<p>可以尝试输入一些什么东西进行搜索，例如: Shell</p>
+				{% else %}
+					<h3>搜索 "{{request.GET.q}}"，找到{{page.paginator.count}}条结果</h3>
+					<hr>
+					{% for blog in page.object_list %}
+						<a href="{% url 'blog:blog_detail' blog.pk %}">
+							<h4>{{blog.object.title}}</h4>
+						</a>
+						<p>{{blog.object.content|striptags|truncatechars_html:100}}</p>
+					{% empty %}
+						暂无相关内容，可以尝试一下其他关键词。
+					{% endfor %}
+				{% endif %}
+			{% endif %}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+  {% if page.has_previous or page.has_next %}
+		<div>
+			{% if page.has_previous %}<a href="?q={{ query }}&page={{ page.previous_page_number }}">{% endif %}« 上一页{% if page.has_previous %}</a>{% endif %}
+		|
+			{% if page.has_next %}<a href="?q={{ query }}&page={{ page.next_page_number }}">{% endif %}下一页 »{% if page.has_next %}</a>{% endif %}
+		</div>
+	{% endif %}
+		</div>
+		</div>
+	</div>
+{% endblock %}
