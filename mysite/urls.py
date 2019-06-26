@@ -33,7 +33,8 @@ urlpatterns = [
 	path('user/', include('user.urls')),
 	path('notifications/', include('notifications.urls'), name='notifications'),
 	path('my_notifications/', include('my_notifications.urls'), name='my_notifications'),
-	path('search/', views.search, name='search'),
+	# path('search/', views.search, name='search'),
+	path('search/', views.MySearchView(), name='haystack_search'),
 ]
 
 # 配置MEDIA的存储路径。
