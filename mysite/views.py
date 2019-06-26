@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from read_statistics.utils import get_past_seven_days_data, get_today_hot_read, get_yesterday_hot_read, get_past_7_data, get_past_30_hot_read
 from blog.models import Blog
+from haystack.views import SearchView
+
 
 def home(request):
 	blog_content_type = ContentType.objects.get_for_model(Blog)
@@ -53,4 +55,12 @@ def search(request):
 	context['result_count'] = result_count
 	context['page_of_blogs'] = page_of_blogs
 	return render(request, 'search.html', context)
+
+
+class MySearchView(SearchView):
+	def extra_context(self):
+		context = super(MySearchView,self).extra_context()
+		# context['search_word'] = 
+		return context
+
 
