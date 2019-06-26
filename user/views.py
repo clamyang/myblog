@@ -131,11 +131,10 @@ def send_verification_code(request):
 		print(code)
 		now = int(time.time())
 		send_code_time = request.session.get('send_code_time', 0)
-		if now - send_code_time < 30:
+		if now - send_code_time < 60:
 			data['status'] = 'failed'
 		else:
 			request.session[send_for] = code
-			print(request.session[send_for])
 			request.session['send_code_time'] = now
 			# 发送邮件
 			send_mail(
